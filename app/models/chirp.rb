@@ -37,16 +37,27 @@ class Chirp < ApplicationRecord
   end
 
   #Find all chirps for a particular user
+  User.find_by(username: 'wakka_wakka').chirps # multiple queries
+  Chirp.joins(:author).where(users: { username: 'wakka_wakka' })
+                        #table_name:  {column: value searching by}
+  Chirp.joins(:author).where("users.username = 'wakka_wakka'")
 
   #Find all chirps liked by people politically affiliated with JavaScript
+  Chirp.joins(:likers).where("users.political_affiliation = ?", 'JavaScript')
 
   #Get only the unique values from the previous query
+  Chirp.joins(:likers).where("users.political_affiliation = ?", 'JavaScript').distinct
 
   #Find all chirps with no likes
+  Chirp.left_outer_joins(:likes).where(likes: { id: nil })
 
   #Find how many likes each chirp has
+  Chirp.select(:id, :body, 'COUNT(*) AS num_likes').joins(:likes).group(:id)
 
   #Find chirps with at least 3 likes
+  Chirp.joins(:likes).group(:id).having('COUNT(*) >= ?', 3).pluck(:body)
+  Chirp.joins(:likes).group(:id).having('COUNT(*) >= ?', 3).select(:body)
+
 
 
   # Includes #
@@ -64,6 +75,7 @@ class Chirp < ApplicationRecord
   def self.see_chirps_optimized
     # pre-fetches data
     chirps = Chirp.includes(:author).all
+    # chirps = Chirp.includes(:author)
 
     chirps.each do |chirp| 
     # uses pre-fetched data 
@@ -87,8 +99,17 @@ class Chirp < ApplicationRecord
       .joins(:likes)
       .group(:id)
 
-    chirps_with_likes.each do |chirp|
+    chirps_with_likes.each do |chirp| 
       puts chirp.num_likes
     end
   end
 end
+
+
+# Actor
+#     .joins(:movies)
+#     .select(:id, :name)
+#     .where(movies: { title: 'Pulp Fiction' }) == "movies.title = 'Pulp Fiction'"
+
+# .where(title: 'Pulp Fiction') == 'actors.title = Pulp Fiction'
+# .where('title = \'Pulp Fiction\'') == "title = 'Pulp Fiction'"
