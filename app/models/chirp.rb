@@ -37,26 +37,26 @@ class Chirp < ApplicationRecord
   end
 
   #Find all chirps for a particular user
-  User.find_by(username: 'wakka_wakka').chirps # multiple queries
-  Chirp.joins(:author).where(users: { username: 'wakka_wakka' })
+  # User.find_by(username: 'wakka_wakka').chirps # multiple queries
+  # Chirp.joins(:author).where(users: { username: 'wakka_wakka' })
                         #table_name:  {column: value searching by}
-  Chirp.joins(:author).where("users.username = 'wakka_wakka'")
+  # Chirp.joins(:author).where("users.username = 'wakka_wakka'")
 
   #Find all chirps liked by people politically affiliated with JavaScript
-  Chirp.joins(:likers).where("users.political_affiliation = ?", 'JavaScript')
+  # Chirp.joins(:likers).where("users.political_affiliation = ?", 'JavaScript')
 
   #Get only the unique values from the previous query
-  Chirp.joins(:likers).where("users.political_affiliation = ?", 'JavaScript').distinct
+  # Chirp.joins(:likers).where("users.political_affiliation = ?", 'JavaScript').distinct
 
   #Find all chirps with no likes
-  Chirp.left_outer_joins(:likes).where(likes: { id: nil })
+  # Chirp.left_outer_joins(:likes).where(likes: { id: nil })
 
   #Find how many likes each chirp has
-  Chirp.select(:id, :body, 'COUNT(*) AS num_likes').joins(:likes).group(:id)
+  # Chirp.select(:id, :body, 'COUNT(*) AS num_likes').joins(:likes).group(:id)
 
   #Find chirps with at least 3 likes
-  Chirp.joins(:likes).group(:id).having('COUNT(*) >= ?', 3).pluck(:body)
-  Chirp.joins(:likes).group(:id).having('COUNT(*) >= ?', 3).select(:body)
+  # Chirp.joins(:likes).group(:id).having('COUNT(*) >= ?', 3).pluck(:body)
+  # Chirp.joins(:likes).group(:id).having('COUNT(*) >= ?', 3).select(:body)
 
 
 
