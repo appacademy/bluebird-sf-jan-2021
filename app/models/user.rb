@@ -8,12 +8,13 @@
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #  age                   :integer          not null
-#  political_affiliation :string           not null
+#  political_affiliation :string
 #
 class User < ApplicationRecord
   # validates :column_name1, :column_name2, validation: one, validation: two 
   validates :username, :email, presence: true, uniqueness: true
-  validates :age, :political_affiliation, presence: true
+  # validates :age, :political_affiliation, presence: true
+  validates :age, presence: true
 
   has_many :chirps,
     primary_key: :id,

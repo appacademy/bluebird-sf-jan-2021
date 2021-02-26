@@ -23,7 +23,7 @@ class UsersController < ApplicationController
 
     # attempt to save the user, do something if success, do something if failure
     if user.save
-      debugger
+      # debugger
       # do something
       # redirect_to "/users/#{user.id}" # /users/14 # makes separate GET request to the path provided
       redirect_to user_url(user.id) # same result as above line
