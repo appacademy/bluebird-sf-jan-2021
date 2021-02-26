@@ -1,0 +1,9 @@
+<%#render('user', {user: @user})%>
+<%= render "user",  user: @user, action: 'show' %>
+
+<a href="<%= edit_user_url(@user) %>">Edit User</a>
+
+<form action="<%= user_url(@user) %>" method="POST" >
+  <input type="hidden" name="_method" value="DELETE">
+  <input type="submit" value="Delete User">
+</form>
