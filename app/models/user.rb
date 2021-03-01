@@ -9,12 +9,22 @@
 #  updated_at            :datetime         not null
 #  age                   :integer          not null
 #  political_affiliation :string
+#  password_digest       :string           not null
+#  session_token         :string           not null
 #
 class User < ApplicationRecord
   # validates :column_name1, :column_name2, validation: one, validation: two 
-  validates :username, :email, presence: true, uniqueness: true
+  validates :username, :email, :session_token, presence: true, uniqueness: true
   # validates :age, :political_affiliation, presence: true
-  validates :age, presence: true
+  validates :age, :password_digest, presence: true
+  validates :password, length: { minimum: 6 }
+
+  private
+  attr_reader :password
+
+  public
+
+  after_initialize :ensure_session_token # method is run after initialization 
 
   has_many :chirps,
     primary_key: :id,
@@ -28,6 +38,43 @@ class User < ApplicationRecord
   has_many :liked_chirps,
     through: :likes,
     source: :chirp
+
+  # def password
+  #   p "password getter"
+  #   @password
+  # end
+
+  def self.find_by_credentials(username, password)
+    user = User.find_by(username: username) # find user by unique username, returns user object
+    if user && user.password?(password)
+      user
+    else
+      nil
+    end
+  end
+
+  def password?(password)
+    BCrypt::Password.new(self.password_digest).is_password?(password) 
+    # create BCrypt Object using digest
+    # call is_password? (BCrypt method) on the object while passing in the password string
+    # returns true if it matches and false if not
+  end
+
+  def password=(password)
+    self.password_digest = BCrypt::Password.create(password) # creates password_digest string
+    # p "password setter"
+    @password = password
+  end
+
+  def ensure_session_token
+    self.session_token ||= SecureRandom::urlsafe_base64 # creates random string
+  end
+
+  def reset_session_token!
+    self.session_token = SecureRandom::urlsafe_base64 # new string
+    self.save! # save (with loud errors)
+    self.session_token # return token
+  end
 
   #Get first user record, use first
   # User.first

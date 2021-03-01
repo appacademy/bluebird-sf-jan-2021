@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_action :require_logged_in, only: [:index]
   
   def index
     # /users
@@ -28,6 +29,7 @@ class UsersController < ApplicationController
       # debugger
       # do something
       # redirect_to "/users/#{user.id}" # /users/14 # makes separate GET request to the path provided
+      login!(@user)
       redirect_to user_url(@user.id) # same result as above line
     else
       # do something else
@@ -74,7 +76,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:username, :email, :age, :political_affiliation)
+    params.require(:user).permit(:username, :email, :age, :political_affiliation, :password)
   end
 
 end
