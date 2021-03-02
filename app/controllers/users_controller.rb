@@ -34,6 +34,7 @@ class UsersController < ApplicationController
     else
       # do something else
       # render json: user.errors.full_messages, status: 422
+      flash.now[:errors] = @user.errors.full_messages
       render :new
     end
   end
