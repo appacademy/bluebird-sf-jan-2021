@@ -19,7 +19,7 @@ class User < ApplicationRecord
   validates :age, :password_digest, presence: true
   validates :password, length: { minimum: 6, allow_nil: true }
 
-  private
+  # private
   attr_reader :password
 
   public
